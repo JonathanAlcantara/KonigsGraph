@@ -1,2 +1,2 @@
-# KonigsGraphs
+# KonigsGraph
 This project is a Library to provide Graphs Algorithms.
