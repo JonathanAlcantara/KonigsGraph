@@ -3,13 +3,14 @@
 #include <vector>
 #include <bitset>
 
-template <std::size_t VERTEX_NUM>
-class KonigsGraph{
+// template <std::size_t VERTEX_NUM>
+class KonigsGraph {
     private:
-        std::array<std::bitset<VERTEX_NUM>, VERTEX_NUM> adjMatrix;
-        std::array<std::vector<int>, VERTEX_NUM> adjVector;
+        int VERTEX_NUM;
+        // int [VERTEX_NUM][VERTEX_NUM]  adjMatrix;
+        // int, 3> adjVector;
     public:
-        KonigsGraph();
+        KonigsGraph(int vertex_qty);
         ~KonigsGraph();
         void loadGraph(bool matrixAndVector);
         int* stats();

@@ -26,16 +26,16 @@ void FileHandler::openFile(std::string filePath) {
     std::string row;
 
     int row_counter = 1;
-    int num_vertex;
+
     
     while (std::getline(graphFile, row)) {
         
         
         if (row_counter == 1) {
             std::stringstream integerConversor(row);
-            integerConversor >> num_vertex; 
+            integerConversor >> vertex_qty; 
             row_counter++;
-            std::cout <<  "The graph has " << num_vertex << " vertex" << std::endl; 
+            std::cout <<  "The graph has " << vertex_qty << " vertex" << std::endl; 
             continue;
         } 
 
@@ -54,6 +54,11 @@ void FileHandler::openFile(std::string filePath) {
     graphFile.close();
 
 };
+
+int FileHandler::get_vertex_qty() {
+    return vertex_qty;
+};
+
 
 void FileHandler::writeFile() {
 
