@@ -5,10 +5,12 @@
 
 template <std::size_t VERTEX_NUM>
 class KonigsGraph{
-    private: 
+    private:
         std::array<std::bitset<VERTEX_NUM>, VERTEX_NUM> adjMatrix;
         std::array<std::vector<int>, VERTEX_NUM> adjVector;
-    public: 
+    public:
+        KonigsGraph();
+        ~KonigsGraph();
         void loadGraph(bool matrixAndVector);
         int* stats();
         void BFS(int startVertex);
@@ -18,5 +20,3 @@ class KonigsGraph{
         int* connectedComponents();
         void printGraph();
 };
-
-
