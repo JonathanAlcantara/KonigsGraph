@@ -47,10 +47,6 @@ void FileHandler::openFile(std::string filePath) {
         row_counter++;
     }
 
-    // After reading the file, depending of the users choice, this method must call an
-    // auxiliar one responsible for build a matrix or build an array
-
-
     graphFile.close();
 
 };
