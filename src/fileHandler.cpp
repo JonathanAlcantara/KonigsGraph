@@ -41,10 +41,14 @@ void FileHandler::openFile(std::string filePath) {
 
         
         std::string delimiter = " ";
-        std::cout <<  "There is an edge from " << row.substr(0, row.find(delimiter))  <<  " to " << row.substr(2, row.find(delimiter)) << std::endl; 
+        std::cout <<  "There is an edge from " << row.substr(0, row.find(delimiter))  <<  
+        " to " << row.substr(2, row.find(delimiter))  << std::endl; 
 
         row_counter++;
     }
+
+    // After reading the file, depending of the users choice, this method must call an
+    // auxiliar one responsible for build a matrix or build an array
 
 
     graphFile.close();
