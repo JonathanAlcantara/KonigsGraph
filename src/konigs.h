@@ -9,6 +9,8 @@ class KonigsGraph {
         int VERTEX_NUM;
         // int [VERTEX_NUM][VERTEX_NUM]  adjMatrix;
         // int, 3> adjVector;
+        bool** adjMatrix;
+
     public:
         KonigsGraph(int vertex_qty);
         ~KonigsGraph();
