@@ -1,7 +1,7 @@
 build:
 	@mkdir -p bin
 	@echo 'Compiling program'
-	g++ src/konigs.cpp -o bin/konigs
+	g++ src/main.cpp -o bin/konigs
 
 run: build
 	@echo $('\n\n')
