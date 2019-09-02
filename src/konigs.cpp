@@ -67,9 +67,31 @@ KonigsGraph::stats(){
     return std::make_tuple(numberOfVertex, numberOfEdges, minDegree, maxDegree, meanDegree, medianDegree);
 }
 
+std::tuple<std::vector<unsigned>, std::vector<unsigned>>
+KonigsGraph::BFS(unsigned startVertex){
+    std::vector<unsigned> dadVectors (numberOfVertex);
+    std::vector<unsigned> heightVectors (numberOfVertex);
+
+    return std::make_tuple(dadVectors, heightVectors);
+}
+
+std::tuple<std::vector<unsigned>, std::vector<unsigned>>
+KonigsGraph::DFS(unsigned startVertex){
+    std::vector<unsigned> dadVectors (numberOfVertex);
+    std::vector<unsigned> heightVectors (numberOfVertex);
+
+    return std::make_tuple(dadVectors, heightVectors);
+}
 
 unsigned KonigsGraph::distance(unsigned firstVertex, unsigned lastVertex){
     return std::get<1>(KonigsGraph::BFS(firstVertex))[lastVertex];
+}
+
+unsigned KonigsGraph::diameter(){
+    unsigned currentMaxDistance = 0;
+    for (unsigned i = 0; i <= numberOfVertex/2; i++){
+    }
+    return 0;
 }
 
 KonigsGraph::KonigsGraph(std::string file){
