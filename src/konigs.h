@@ -1,25 +1,28 @@
 #include <iostream>
-#include <array>
+#include<algorithm> 
 #include <vector>
-#include <bitset>
+#include <fstream>
+#include <tuple>
+#include <sstream>
+#include <string>
 
-// template <std::size_t VERTEX_NUM>
 class KonigsGraph {
     private:
-        int VERTEX_NUM;
-        // int [VERTEX_NUM][VERTEX_NUM]  adjMatrix;
-        // int, 3> adjVector;
-        bool** adjMatrix;
+        bool isStatsUpdated;
+        unsigned numberOfVertex, numberOfEdges, minDegree, maxDegree, meanDegree, medianDegree;
+        std::vector<std::vector<bool>> adjMatrix;
+        std::vector<std::vector<unsigned>> adjVector;
+        std::vector<unsigned> maxHeightsInBFS;
 
     public:
-        KonigsGraph(int vertex_qty);
+        KonigsGraph(std::string file);
         ~KonigsGraph();
-        void loadGraph(bool matrixAndVector);
-        int* stats();
-        void BFS(int startVertex);
-        void DFS(int startVertex);
-        int* distance(int firstVertex, int lastVertex);
-        int diameter();
+        void loadGraphFromFile(std::string file, bool createMatrix, bool createVector);
+        std::tuple<unsigned, unsigned, unsigned, unsigned, unsigned, unsigned> stats();
+        std::tuple<std::vector<unsigned>, std::vector<unsigned>> BFS(unsigned startVertex);
+        std::tuple<std::vector<unsigned>, std::vector<unsigned>> DFS(unsigned startVertex);
+        unsigned distance(unsigned firstVertex, unsigned lastVertex);
+        unsigned diameter();
         int* connectedComponents();
         void printGraph();
 };
