@@ -44,6 +44,29 @@ void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix = true, 
     inFile.close();
 };
 
+std::tuple<unsigned, unsigned, unsigned, unsigned, unsigned, unsigned> 
+KonigsGraph::stats(){
+
+    if (!isStatsUpdated){
+        numberOfVertex = adjVector.size();
+        std::vector<unsigned> tempDegrees(numberOfVertex);
+        unsigned currentDegree, sumOfDegrees = 0;
+        minDegree = maxDegree = 0;
+        for (unsigned i = 0; i < numberOfVertex; i++){
+            currentDegree = adjVector[i].size();
+            sumOfDegrees += currentDegree;
+            tempDegrees[i] = currentDegree;
+            minDegree = std::min<unsigned>(currentDegree, minDegree);
+            maxDegree = std::max<unsigned>(currentDegree, minDegree);
+        }
+        medianDegree = tempDegrees[numberOfVertex/2];
+        meanDegree = sumOfDegrees/numberOfVertex;
+        numberOfEdges = sumOfDegrees/2;
+        isStatsUpdated = true;
+    }
+    return std::make_tuple(numberOfVertex, numberOfEdges, minDegree, maxDegree, meanDegree, medianDegree);
+}
+
 KonigsGraph::KonigsGraph(std::string file){
     KonigsGraph::loadGraphFromFile(file);
     KonigsGraph::stats();
