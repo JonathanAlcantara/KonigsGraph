@@ -67,6 +67,11 @@ KonigsGraph::stats(){
     return std::make_tuple(numberOfVertex, numberOfEdges, minDegree, maxDegree, meanDegree, medianDegree);
 }
 
+
+unsigned KonigsGraph::distance(unsigned firstVertex, unsigned lastVertex){
+    return std::get<1>(KonigsGraph::BFS(firstVertex))[lastVertex];
+}
+
 KonigsGraph::KonigsGraph(std::string file){
     KonigsGraph::loadGraphFromFile(file);
     KonigsGraph::stats();
