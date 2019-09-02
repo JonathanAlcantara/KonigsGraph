@@ -1,1 +1,7 @@
 .vscode
+
+#Vim Files
+*.swp
+
+#Binary Files
+bin/*
