@@ -14,7 +14,6 @@ void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix = true, 
     std::getline(inFile, line);
     unsigned numberOfNodes = std::stoi(line);
     if(createMatrix){
-        //std::vector<std::vector<bool>> tempMatrix (numberOfNodes, std::vector<bool>(numberOfNodes));
         adjMatrix = std::vector<std::vector<bool>> (numberOfNodes, std::vector<bool>(numberOfNodes));
     }
     if(createVector){
@@ -25,8 +24,12 @@ void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix = true, 
     {
         std::istringstream iss(line);
         unsigned vertex1, vertex2;
+
         if (!(iss >> vertex1 >> vertex2)) { break; } // error
-        if (createMatrix) adjMatrix[vertex1 - 1][vertex2 - 1] = true;
+        if (createMatrix){
+            adjMatrix[vertex1 - 1][vertex2 - 1] = true;
+            adjMatrix[vertex2 - 1][vertex1 - 1] = true;
+        }
         if (createVector){
             adjVector[vertex1 - 1].push_back(vertex2 - 1);
             adjVector[vertex2 - 1].push_back(vertex1 - 1);
@@ -106,6 +109,16 @@ unsigned KonigsGraph::diameter(){
 }
 
 KonigsGraph::KonigsGraph(std::string file){
-    KonigsGraph::loadGraphFromFile(file);
+    KonigsGraph::loadGraphFromFile(file, true, true);
     KonigsGraph::stats();
 }
+
+void KonigsGraph::printStats(){
+    std::tuple<unsigned, unsigned, unsigned, unsigned, unsigned, unsigned> stats = KonigsGraph::stats();
+    std::cout << "Number of vertex: " << std::get<0>(stats) << std::endl;
+    std::cout << "Number of edges: " << std::get<1>(stats) << std::endl;
+    std::cout << "Minimum degree: " << std::get<2>(stats) << std::endl;
+    std::cout << "Maximum degree: " << std::get<3>(stats) << std::endl;
+    std::cout << "Mean degree: " << std::get<4>(stats) << std::endl;
+    std::cout << "Median degree: " << std::get<5>(stats) << std::endl;
+};

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
+#include <stack>
 #include <fstream>
 #include <tuple>
 #include <sstream>
@@ -25,4 +26,5 @@ class KonigsGraph {
         unsigned diameter();
         int* connectedComponents();
         void printGraph();
+        void printStats();
 };
