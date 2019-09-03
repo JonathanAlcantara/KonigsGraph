@@ -55,15 +55,13 @@ KonigsGraph::stats(){
         minDegree = maxDegree = adjVector[0].size();
         for (unsigned i = 0; i < numberOfVertex; i++){
             currentDegree = adjVector[i].size();
-            std::cout << "Current Degree " << currentDegree << std::endl; 
             sumOfDegrees += currentDegree;
             tempDegrees[i] = currentDegree;
-            minDegree = std::min<unsigned>(currentDegree, minDegree);
-            maxDegree = std::max<unsigned>(currentDegree, minDegree);
+            minDegree = std::min(currentDegree, minDegree);
+            maxDegree = std::max(currentDegree, maxDegree);
         }
         std::sort(tempDegrees.begin(), tempDegrees.end());
         medianDegree = numberOfVertex % 2 == 0 ? tempDegrees[int(numberOfVertex/2) + 1] : (tempDegrees[numberOfVertex/2 - 1] + tempDegrees[numberOfVertex/2])/2;
-        medianDegree = tempDegrees[numberOfVertex/2];
         meanDegree = sumOfDegrees/numberOfVertex;
         numberOfEdges = sumOfDegrees/2;
         isStatsUpdated = true;
@@ -80,6 +78,7 @@ KonigsGraph::BFS(unsigned startVertex){
     heightVector[startVertex] = 0;
     discoveredQueue.push(startVertex);
 
+    unsigned maxHeight = 0;
     while (!discoveredQueue.empty()){
         unsigned currentVertex = discoveredQueue.front();
         discoveredQueue.pop();
@@ -87,11 +86,14 @@ KonigsGraph::BFS(unsigned startVertex){
         for (auto neighbor: adjVector[currentVertex]){
             if (heightVector[neighbor] == -1) {
                 heightVector[neighbor] = heightOfCurrVertex + 1;
+                maxHeight = std::max(maxHeight, heightVector[neighbor]);
                 dadVector[neighbor] = currentVertex + 1;
                 discoveredQueue.push(neighbor);
             }
         }
     }
+
+    maxHeightsInBFS[startVertex] = maxHeight;
 
     return std::make_tuple(dadVector, heightVector);
 }
@@ -132,18 +134,27 @@ unsigned KonigsGraph::distance(unsigned firstVertex, unsigned lastVertex){
 }
 
 unsigned KonigsGraph::diameter(){
-    unsigned currentMaxDistance = 0;
     for (unsigned i = 0; i <= numberOfVertex/2; i++){
+        KonigsGraph::BFS(i);
     }
-    return 0;
+    return *std::max_element(maxHeightsInBFS.begin(), maxHeightsInBFS.end());
 }
 
 KonigsGraph::KonigsGraph(std::string file){
     KonigsGraph::loadGraphFromFile(file, true, true);
     KonigsGraph::sortAdjVector();
     KonigsGraph::stats();
+    maxHeightsInBFS = std::vector<unsigned> (int(numberOfVertex/2)+1);
 }
 
+void KonigsGraph::printGraph(){
+    for (unsigned line = 0; line < adjVector.size(); line++){
+        for (unsigned column = 0; column < adjVector[line].size(); column++){
+            std::cout << adjVector[line][column] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
 void KonigsGraph::printStats(){
     std::tuple<unsigned, unsigned, unsigned, unsigned, unsigned, unsigned> stats = KonigsGraph::stats();
     std::cout << "Number of vertex: " << std::get<0>(stats) << std::endl;
