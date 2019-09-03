@@ -57,10 +57,27 @@ KonigsGraph::stats(){
 
 std::tuple<std::vector<unsigned>, std::vector<unsigned>>
 KonigsGraph::BFS(unsigned startVertex){
-    std::vector<unsigned> dadVectors (numberOfVertex);
-    std::vector<unsigned> heightVectors (numberOfVertex);
+    std::vector<unsigned> dadVector (numberOfVertex, -1);
+    std::vector<unsigned> heightVector (numberOfVertex, -1);
+    std::queue<unsigned> discoveredQueue;
 
-    return std::make_tuple(dadVectors, heightVectors);
+    heightVector[startVertex] = 0;
+    discoveredQueue.push(startVertex);
+
+    while (!discoveredQueue.empty()){
+        unsigned currentVertex = discoveredQueue.front();
+        discoveredQueue.pop();
+        unsigned heightOfCurrVertex = heightVector[currentVertex];
+        for (auto neighbor: adjVector[currentVertex]){
+            if (heightVector[neighbor] == -1) {
+                heightVector[neighbor] = heightOfCurrVertex + 1;
+                dadVector[neighbor] = currentVertex;
+                discoveredQueue.push(neighbor);
+            }
+        }
+    }
+
+    return std::make_tuple(dadVector, heightVector);
 }
 
 std::tuple<std::vector<unsigned>, std::vector<unsigned>>

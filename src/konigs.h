@@ -1,6 +1,7 @@
 #include <iostream>
 #include<algorithm> 
 #include <vector>
+#include <queue>
 #include <fstream>
 #include <tuple>
 #include <sstream>
