@@ -91,9 +91,32 @@ KonigsGraph::BFS(unsigned startVertex){
 
 std::tuple<std::vector<unsigned>, std::vector<unsigned>>
 KonigsGraph::DFS(unsigned startVertex){
-    std::vector<unsigned> dadVector (numberOfVertex);
-    std::vector<unsigned> heightVector (numberOfVertex);
+    std::vector<unsigned> dadVector (numberOfVertex, 0);
+    std::vector<unsigned> heightVector (numberOfVertex, -1);
+    std::stack<unsigned> toExploreStack;
 
+    heightVector[startVertex] = 0;
+    for (auto neighbor: adjVector[startVertex]) {
+            toExploreStack.push(neighbor);
+            dadVector[neighbor] = startVertex + 1;
+    }
+
+    while (!toExploreStack.empty()){
+
+        unsigned currentVertex = toExploreStack.top();
+        toExploreStack.pop();
+
+        if(heightVector[currentVertex] == -1){
+            unsigned heightOfCurrVertex = heightVector[dadVector[currentVertex] - 1] + 1;
+            heightVector[currentVertex] = heightOfCurrVertex;
+            for (auto neighbor: adjVector[currentVertex]) {
+                toExploreStack.push(neighbor);
+                if (heightVector[neighbor] == -1){
+                    dadVector[neighbor] = currentVertex + 1;
+                }
+            }
+        }
+    }
     return std::make_tuple(dadVector, heightVector);
 }
 
