@@ -1,5 +1,5 @@
 #include <iostream>
-#include<algorithm> 
+#include <algorithm>
 #include <vector>
 #include <queue>
 #include <fstream>
@@ -17,7 +17,6 @@ class KonigsGraph {
 
     public:
         KonigsGraph(std::string file);
-        ~KonigsGraph();
         void loadGraphFromFile(std::string file, bool createMatrix, bool createVector);
         std::tuple<unsigned, unsigned, unsigned, unsigned, unsigned, unsigned> stats();
         std::tuple<std::vector<unsigned>, std::vector<unsigned>> BFS(unsigned startVertex);

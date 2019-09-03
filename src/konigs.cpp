@@ -26,9 +26,13 @@ void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix = true, 
         std::istringstream iss(line);
         unsigned vertex1, vertex2;
         if (!(iss >> vertex1 >> vertex2)) { break; } // error
-        if (createMatrix) adjMatrix[vertex1][vertex2] = true;
-        if (createVector) adjVector[vertex1].push_back(vertex2);
+        if (createMatrix) adjMatrix[vertex1 - 1][vertex2 - 1] = true;
+        if (createVector){
+            adjVector[vertex1 - 1].push_back(vertex2 - 1);
+            adjVector[vertex2 - 1].push_back(vertex1 - 1);
+        }
     } 
+
     inFile.close();
 };
 
@@ -39,7 +43,7 @@ KonigsGraph::stats(){
         numberOfVertex = adjVector.size();
         std::vector<unsigned> tempDegrees(numberOfVertex);
         unsigned currentDegree, sumOfDegrees = 0;
-        minDegree = maxDegree = 0;
+        minDegree = maxDegree = adjVector[0].size();
         for (unsigned i = 0; i < numberOfVertex; i++){
             currentDegree = adjVector[i].size();
             sumOfDegrees += currentDegree;
@@ -47,6 +51,8 @@ KonigsGraph::stats(){
             minDegree = std::min<unsigned>(currentDegree, minDegree);
             maxDegree = std::max<unsigned>(currentDegree, minDegree);
         }
+        std::sort(tempDegrees.begin(), tempDegrees.end());
+        medianDegree = numberOfVertex % 2 == 0 ? tempDegrees[int(numberOfVertex/2) + 1] : (tempDegrees[numberOfVertex/2 - 1] + tempDegrees[numberOfVertex/2])/2;
         medianDegree = tempDegrees[numberOfVertex/2];
         meanDegree = sumOfDegrees/numberOfVertex;
         numberOfEdges = sumOfDegrees/2;
@@ -57,7 +63,7 @@ KonigsGraph::stats(){
 
 std::tuple<std::vector<unsigned>, std::vector<unsigned>>
 KonigsGraph::BFS(unsigned startVertex){
-    std::vector<unsigned> dadVector (numberOfVertex, -1);
+    std::vector<unsigned> dadVector (numberOfVertex, 0);
     std::vector<unsigned> heightVector (numberOfVertex, -1);
     std::queue<unsigned> discoveredQueue;
 
@@ -71,7 +77,7 @@ KonigsGraph::BFS(unsigned startVertex){
         for (auto neighbor: adjVector[currentVertex]){
             if (heightVector[neighbor] == -1) {
                 heightVector[neighbor] = heightOfCurrVertex + 1;
-                dadVector[neighbor] = currentVertex;
+                dadVector[neighbor] = currentVertex + 1;
                 discoveredQueue.push(neighbor);
             }
         }
