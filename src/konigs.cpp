@@ -39,6 +39,12 @@ void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix = true, 
     inFile.close();
 };
 
+void KonigsGraph::sortAdjVector(){
+    for (auto neighborsVector : adjVector){
+        std::sort(neighborsVector.begin(), neighborsVector.end());
+    }
+}
+
 std::tuple<unsigned, unsigned, unsigned, unsigned, unsigned, unsigned> 
 KonigsGraph::stats(){
 
@@ -134,6 +140,7 @@ unsigned KonigsGraph::diameter(){
 
 KonigsGraph::KonigsGraph(std::string file){
     KonigsGraph::loadGraphFromFile(file, true, true);
+    KonigsGraph::sortAdjVector();
     KonigsGraph::stats();
 }
 

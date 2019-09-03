@@ -19,6 +19,7 @@ class KonigsGraph {
     public:
         KonigsGraph(std::string file);
         void loadGraphFromFile(std::string file, bool createMatrix, bool createVector);
+        void sortAdjVector();
         std::tuple<unsigned, unsigned, unsigned, unsigned, unsigned, unsigned> stats();
         std::tuple<std::vector<unsigned>, std::vector<unsigned>> BFS(unsigned startVertex);
         std::tuple<std::vector<unsigned>, std::vector<unsigned>> DFS(unsigned startVertex);
