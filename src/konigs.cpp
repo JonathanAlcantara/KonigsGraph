@@ -96,6 +96,19 @@ std::tuple<std::vector<unsigned>, std::vector<unsigned>>
 KonigsGraph::DFS(unsigned startVertex){
     std::vector<unsigned> dadVector (numberOfVertex);
     std::vector<unsigned> heightVector (numberOfVertex);
+    std::queue<unsigned> toExploreQueue;
+    std::queue<unsigned> discoveredQueue;
+    
+    toExploreQueue.push(startVertex);
+
+    while (!toExploreQueue.empty()){
+        unsigned currentVertex = toExploreQueue.front();
+
+        
+            
+    
+    }
+
 
     return std::make_tuple(dadVector, heightVector);
 }
