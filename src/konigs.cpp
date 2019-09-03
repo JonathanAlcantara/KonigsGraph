@@ -49,6 +49,7 @@ KonigsGraph::stats(){
         minDegree = maxDegree = adjVector[0].size();
         for (unsigned i = 0; i < numberOfVertex; i++){
             currentDegree = adjVector[i].size();
+            std::cout << "Current Degree " << currentDegree << std::endl; 
             sumOfDegrees += currentDegree;
             tempDegrees[i] = currentDegree;
             minDegree = std::min<unsigned>(currentDegree, minDegree);
