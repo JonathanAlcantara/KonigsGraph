@@ -34,4 +34,9 @@ int main(){
         std::cout << height << " ";
     }
     std::cout << std::endl;
+
+    std::cout << "Distance between 1 and 2: " << graph.distance(0, 1) << std::endl;
+    std::cout << "Distance between 1 and 3: " << graph.distance(0, 2) << std::endl;
+    std::cout << "Distance between 1 and 4: " << graph.distance(0, 3) << std::endl;
+    std::cout << "Distance between 1 and 5: " << graph.distance(0, 4) << std::endl;
 }
