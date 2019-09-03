@@ -26,4 +26,5 @@ class KonigsGraph {
         unsigned diameter();
         int* connectedComponents();
         void printGraph();
+        void printStats();
 };
