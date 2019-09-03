@@ -65,10 +65,10 @@ KonigsGraph::BFS(unsigned startVertex){
 
 std::tuple<std::vector<unsigned>, std::vector<unsigned>>
 KonigsGraph::DFS(unsigned startVertex){
-    std::vector<unsigned> dadVectors (numberOfVertex);
-    std::vector<unsigned> heightVectors (numberOfVertex);
+    std::vector<unsigned> dadVector (numberOfVertex);
+    std::vector<unsigned> heightVector (numberOfVertex);
 
-    return std::make_tuple(dadVectors, heightVectors);
+    return std::make_tuple(dadVector, heightVector);
 }
 
 unsigned KonigsGraph::distance(unsigned firstVertex, unsigned lastVertex){
