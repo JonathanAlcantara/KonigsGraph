@@ -97,18 +97,30 @@ KonigsGraph::DFS(unsigned startVertex){
     std::vector<unsigned> dadVector (numberOfVertex);
     std::vector<unsigned> heightVector (numberOfVertex);
     std::queue<unsigned> toExploreQueue;
-    std::queue<unsigned> discoveredQueue;
+    std::vector<unsigned> discoveredVector(numberOfVertex);
     
     toExploreQueue.push(startVertex);
+    heightVector[startVertex] = 0;
 
     while (!toExploreQueue.empty()){
-        unsigned currentVertex = toExploreQueue.front();
-
         
-            
+        unsigned currentVertex = toExploreQueue.front();
+        unsigned heightOfCurrVertex = heightVector[currentVertex];
+        toExploreQueue.pop();
+        
+        if(std::find(discoveredVector.begin(), discoveredVector.end(), currentVertex) != discoveredVector.end()) {
+            continue; // currentVertex is already completely discovered
+        } 
     
-    }
+        discoveredVector.push_back(currentVertex);
 
+        for (auto neighbor: adjVector[currentVertex]) {
+            if (heightVector[neighbor] == -1) {
+                heightVector[neighbor] = heightOfCurrVertex + 1;
+                dadVector[neighbor] = currentVertex;
+                toExploreQueue.push(neighbor);
+        }
+    }
 
     return std::make_tuple(dadVector, heightVector);
 }

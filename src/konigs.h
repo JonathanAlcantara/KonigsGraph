@@ -1,5 +1,5 @@
 #include <iostream>
-#include<algorithm> 
+#include <algorithm> 
 #include <vector>
 #include <queue>
 #include <fstream>
