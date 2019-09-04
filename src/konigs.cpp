@@ -1,6 +1,6 @@
 #include "konigs.h"
 
-void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix = true, bool createVector = true) {
+void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix, bool createVector) {
 
     isStatsUpdated = false;
     std::ifstream inFile;
@@ -40,8 +40,8 @@ void KonigsGraph::loadGraphFromFile(std::string file, bool createMatrix = true, 
 };
 
 void KonigsGraph::sortAdjVector(){
-    for (auto neighborsVector : adjVector){
-        std::sort(neighborsVector.begin(), neighborsVector.end());
+    for (unsigned vertex = 0; vertex < adjVector.size(); vertex++){
+        std::sort(adjVector[vertex].begin(), adjVector[vertex].end());
     }
 }
 
@@ -133,18 +133,43 @@ unsigned KonigsGraph::distance(unsigned firstVertex, unsigned lastVertex){
     return std::get<1>(KonigsGraph::BFS(firstVertex))[lastVertex];
 }
 
-unsigned KonigsGraph::diameter(){
-    for (unsigned i = 0; i <= numberOfVertex/2; i++){
+unsigned KonigsGraph::diameter(unsigned chunkIndex = 0, unsigned chunkSize = -1){
+    unsigned limit = chunkSize == -1 ? int(numberOfVertex/2) + 1 : (chunkIndex + 1)*chunkSize;
+    for (unsigned i = chunkIndex*chunkSize; i < limit; i++){
         KonigsGraph::BFS(i);
     }
     return *std::max_element(maxHeightsInBFS.begin(), maxHeightsInBFS.end());
 }
 
-KonigsGraph::KonigsGraph(std::string file){
-    KonigsGraph::loadGraphFromFile(file, true, true);
+KonigsGraph::KonigsGraph(std::string file, bool createMatrix = true, bool createVector = true){
+    KonigsGraph::loadGraphFromFile(file, createMatrix, createVector);
     KonigsGraph::sortAdjVector();
     KonigsGraph::stats();
     maxHeightsInBFS = std::vector<unsigned> (int(numberOfVertex/2)+1);
+}
+
+KonigsGraph::~KonigsGraph(){
+}
+
+std::vector<std::vector<unsigned>> KonigsGraph::connectedComponents(){
+    std::vector<unsigned> belongingComponent (numberOfVertex, -1);
+    unsigned componentCounter = 0;
+    for (unsigned i = 0; i < numberOfVertex; i++){
+        if (belongingComponent[i] == -1){
+            std::vector<unsigned> currentDadVector = std::get<0>(KonigsGraph::BFS(i));
+            for (unsigned j = 0; j < numberOfVertex; j++){
+                if(currentDadVector[j] != 0 || j == i){
+                    belongingComponent[j] = componentCounter;
+                }
+            }
+            componentCounter++;
+        }
+    }
+    std::vector<std::vector<unsigned>> connectedComponentsVector (componentCounter);
+    for (unsigned vertex = 0; vertex < numberOfVertex; vertex++){
+        connectedComponentsVector[belongingComponent[vertex]].push_back(belongingComponent[vertex]);
+    }
+    return connectedComponentsVector;
 }
 
 void KonigsGraph::printGraph(){
