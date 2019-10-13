@@ -1,6 +1,8 @@
 using namespace std;
 #include "konigs.h"
 #include "edge.h"
+#include <limits>
+#include <queue>
 
 void KonigsGraph::loadGraphFromFile(string file, bool createMatrix, bool createVector) {
 
@@ -50,6 +52,16 @@ void KonigsGraph::loadGraphFromFile(string file, bool createMatrix, bool createV
 
 
 KonigsGraph::KonigsGraph(string file, bool createMatrix = true, bool createVector = true){
+    if (createMatrix) {
+        KonigsGraph::hasAdjMatrixRepresentation = true;
+    } else {
+        KonigsGraph::hasAdjMatrixRepresentation = false;
+    }
+    if (createVector) {
+        KonigsGraph::hasAdjVectorRepresentation = true;
+    } else {
+        KonigsGraph::hasAdjVectorRepresentation = false;
+    }
     KonigsGraph::loadGraphFromFile(file, createMatrix, createVector);
 }
 
@@ -78,3 +90,154 @@ void KonigsGraph::printAdjMatrixGraph(){
     }
 }
 
+bool KonigsGraph::allWeightsArePositive() {
+
+    if (hasAdjMatrixRepresentation) {
+        for (unsigned line = 0; line < adjMatrix.size(); line++){
+            for (unsigned column = 0; column < adjMatrix.size(); column++){
+                if (adjMatrix[line][column] < 0) {
+                    return true;
+                }
+            }
+        }
+    } else {
+
+        for (unsigned line = 0; line < adjVector.size(); line++){
+            for (unsigned column = 0; column < adjVector[line].size(); column++){
+                if(adjVector[line][column].weight < 0) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// Method to get the neightbors of a vertex
+vector<int> KonigsGraph::getAdjacences(int referenceVertex) {
+    vector<int> adjacences;
+    if (hasAdjVectorRepresentation) {
+        for(unsigned i=0; i < adjVector[referenceVertex].size(); i ++) {
+            adjacences.push_back(adjVector[referenceVertex][i].adjacentVertex)
+        }
+    }
+    else {
+        for(unsigned i=0; i < adjMatrix.size(); i ++) {
+            if (adjMatrix[referenceVertex][i] > 0) {
+                adjacences.push_back(i);
+            }
+        }
+    }
+    return adjacences;
+}
+
+
+void KonigsGraph::dijkstraAlgorithm(int startVertex) {
+    if (!allWeightsArePositive) {
+        cout << 'The graph has negative weights! Impossible to apply dijkstra' << endl;
+        return;
+    }
+
+
+    struct Vertex {
+        int vertexID;
+        float totalCost;
+        bool operator<(const Vertex& anotherVertex) const
+        {
+            return totalCost < anotherVertex.totalCost;
+        }
+    };
+
+    vector<float> distances;
+    vector<int> exploredVertexes {};
+    priority_queue<Vertex> unExploredVertexes; // Priority queue to store discovered but not explored vertexes
+
+
+    for (unsigned i = 0; i < adjVector.size(); i++) {
+        distances[i] = numeric_limits<float>::max();
+        Vertex a;
+        a.vertexID = i;
+        a.totalCost = numeric_limits<float>::max();
+        unExploredVertexes.push(a)
+    }
+    distances[startVertex] = 0;
+
+    // priority_queue<float> distances;
+    while (unExploredVertexes.size() != 0) 
+    {
+        Vertex exploring = unExploredVertexes.top();
+        unExploredVertexes.pop();
+        exploredVertexes.push_back(exploring.vertexID);
+
+        vector<int> adjacencesOfCurrentVertex = getAdjacences(exploring.vertexID);
+                		
+		for (unsigned int i = 0; i < adjacencesOfCurrentVertex.size(); i++)
+		{
+            int currentVertexId = exploring.vertexID;
+            int adjacentVertexId = adjacencesOfCurrentVertex[i];
+			// float weight;
+			// auto neighborId = GetNeighbor(nodeId, i, &weight);
+
+			if (distances[adjacentVertexId] > distances[currentVertexId] + weight)
+			{ 
+				distances[adjacentVertexId] = distances[currentVertexId] + weight;
+				priorityQueue.push(Edge(neighborId, distances[neighborId - 1]));
+				prev[neighborId - 1] = nodeId;
+			}
+		}
+        /* 
+
+        1. Selecionar vértice u na fila de prioridade de unexploredVertexes
+        2. Adicionar u em exploredVertexes
+        3. Pra cada vizinho v de u:
+            3.1 Se dist[u] + w(u,v) < dist[v] #Distâcia conhecida previamente até v
+                dist[v] = dist[u] + w(u,v)
+         */
+
+
+    }
+    
+
+
+
+}
+
+	auto prev = vector<unsigned int>(getNodesCount());
+
+	priority_queue<Edge, vector<Edge>, greater<Edge>> priorityQueue;
+	priorityQueue.push(Edge(startNode, 0));
+
+	while (!priorityQueue.empty())
+	{
+		int nodeId = priorityQueue.top().Dest;
+
+		if (nodeId == endNode)
+		{
+			break;
+		}
+
+		priorityQueue.pop();
+		
+		for (unsigned int i = 0; i < m_Degrees[nodeId - 1]; i++)
+		{
+			float weight;
+			auto neighborId = GetNeighbor(nodeId, i, &weight);
+
+			if (distances[neighborId - 1] > distances[nodeId - 1] + weight)
+			{ 
+				distances[neighborId - 1] = distances[nodeId - 1] + weight;
+				priorityQueue.push(Edge(neighborId, distances[neighborId - 1]));
+				prev[neighborId - 1] = nodeId;
+			}
+		}
+	}
+
+	path.clear();
+	unsigned int nodeId = endNode;
+	while (nodeId != 0)
+	{
+		path.push_front(nodeId);
+		nodeId = prev[nodeId - 1];
+	}
+	return distances[endNode - 1];
+}

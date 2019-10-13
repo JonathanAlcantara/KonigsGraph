@@ -14,6 +14,8 @@ using namespace std;
 class KonigsGraph {
     private:
         bool isStatsUpdated;
+        bool hasAdjVectorRepresentation;
+        bool hasAdjMatrixRepresentation;
         unsigned numberOfVertex, numberOfEdges, minDegree, maxDegree, meanDegree, medianDegree;
         vector<vector<float>> adjMatrix;
         vector<vector<Edge>> adjVector;
@@ -24,5 +26,8 @@ class KonigsGraph {
         void loadGraphFromFile(string file, bool createMatrix, bool createVector);
         void printAdjVectorGraph();
         void printAdjMatrixGraph();
-        // void printStats();
+        bool allWeightsArePositive();
+        void dijkstraAlgorithm(int startVertex);
+        vector<int> getAdjacences(int referenceVertex);
+
 };
