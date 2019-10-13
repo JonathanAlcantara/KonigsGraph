@@ -158,11 +158,10 @@ void KonigsGraph::dijkstraAlgorithm(int startVertex) {
         Vertex a;
         a.vertexID = i;
         a.totalCost = numeric_limits<float>::max();
-        unExploredVertexes.push(a)
+        unExploredVertexes.push(a);
     }
     distances[startVertex] = 0;
 
-    // priority_queue<float> distances;
     while (unExploredVertexes.size() != 0) 
     {
         Vertex exploring = unExploredVertexes.top();
@@ -175,14 +174,18 @@ void KonigsGraph::dijkstraAlgorithm(int startVertex) {
 		{
             int currentVertexId = exploring.vertexID;
             int adjacentVertexId = adjacencesOfCurrentVertex[i];
-			// float weight;
-			// auto neighborId = GetNeighbor(nodeId, i, &weight);
+			float edgeWeight;
+            if (hasAdjVectorRepresentation) {
+                edgeWeight = adjVector[currentVertexId][adjacentVertexId].weight;
+            } else {
+                edgeWeight = adjMatrix[currentVertexId][adjacentVertexId];
+            }
 
-			if (distances[adjacentVertexId] > distances[currentVertexId] + weight)
+
+			if (distances[adjacentVertexId] > distances[currentVertexId] + edgeWeight)
 			{ 
-				distances[adjacentVertexId] = distances[currentVertexId] + weight;
-				priorityQueue.push(Edge(neighborId, distances[neighborId - 1]));
-				prev[neighborId - 1] = nodeId;
+				distances[adjacentVertexId] = distances[currentVertexId] + edgeWeight;
+				// unExploredVertexes[adjacentVertexId].
 			}
 		}
         /* 
@@ -198,46 +201,5 @@ void KonigsGraph::dijkstraAlgorithm(int startVertex) {
     }
     
 
-
-
 }
 
-	auto prev = vector<unsigned int>(getNodesCount());
-
-	priority_queue<Edge, vector<Edge>, greater<Edge>> priorityQueue;
-	priorityQueue.push(Edge(startNode, 0));
-
-	while (!priorityQueue.empty())
-	{
-		int nodeId = priorityQueue.top().Dest;
-
-		if (nodeId == endNode)
-		{
-			break;
-		}
-
-		priorityQueue.pop();
-		
-		for (unsigned int i = 0; i < m_Degrees[nodeId - 1]; i++)
-		{
-			float weight;
-			auto neighborId = GetNeighbor(nodeId, i, &weight);
-
-			if (distances[neighborId - 1] > distances[nodeId - 1] + weight)
-			{ 
-				distances[neighborId - 1] = distances[nodeId - 1] + weight;
-				priorityQueue.push(Edge(neighborId, distances[neighborId - 1]));
-				prev[neighborId - 1] = nodeId;
-			}
-		}
-	}
-
-	path.clear();
-	unsigned int nodeId = endNode;
-	while (nodeId != 0)
-	{
-		path.push_front(nodeId);
-		nodeId = prev[nodeId - 1];
-	}
-	return distances[endNode - 1];
-}
