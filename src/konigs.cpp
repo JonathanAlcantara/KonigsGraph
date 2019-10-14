@@ -1,6 +1,7 @@
 using namespace std;
 #include "konigs.h"
 #include "edge.h"
+#include "vertex.h"
 #include <limits>
 #include <queue>
 
@@ -38,9 +39,9 @@ void KonigsGraph::loadGraphFromFile(string file, bool createMatrix, bool createV
         if (createVector){
             Edge edge1;
             Edge edge2;
-            edge1.adjacentVertex =  vertex2;
+            edge1.adjacentVertex =  vertex2-1;
             edge1.weight = weight;
-            edge2.adjacentVertex =  vertex1;
+            edge2.adjacentVertex =  vertex1-1;
             edge2.weight = weight;
             adjVector[vertex1 - 1].push_back(edge1);
             adjVector[vertex2 - 1].push_back(edge2);
@@ -96,7 +97,7 @@ bool KonigsGraph::allWeightsArePositive() {
         for (unsigned line = 0; line < adjMatrix.size(); line++){
             for (unsigned column = 0; column < adjMatrix.size(); column++){
                 if (adjMatrix[line][column] < 0) {
-                    return true;
+                    return false;
                 }
             }
         }
@@ -105,12 +106,12 @@ bool KonigsGraph::allWeightsArePositive() {
         for (unsigned line = 0; line < adjVector.size(); line++){
             for (unsigned column = 0; column < adjVector[line].size(); column++){
                 if(adjVector[line][column].weight < 0) {
-                    return true;
+                    return false;
                 }
             }
         }
     }
-    return false;
+    return true;
 }
 
 // Method to get the neightbors of a vertex
@@ -118,62 +119,73 @@ vector<int> KonigsGraph::getAdjacences(int referenceVertex) {
     vector<int> adjacences;
     if (hasAdjVectorRepresentation) {
         for(unsigned i=0; i < adjVector[referenceVertex].size(); i ++) {
-            adjacences.push_back(adjVector[referenceVertex][i].adjacentVertex)
+            adjacences.push_back(adjVector[referenceVertex][i].adjacentVertex);
+            cout << adjVector[referenceVertex][i].adjacentVertex << endl;
         }
     }
     else {
         for(unsigned i=0; i < adjMatrix.size(); i ++) {
+            // cout << adjMatrix[referenceVertex][i] << endl;
             if (adjMatrix[referenceVertex][i] > 0) {
                 adjacences.push_back(i);
             }
         }
     }
+
     return adjacences;
 }
 
 
 void KonigsGraph::dijkstraAlgorithm(int startVertex) {
-    if (!allWeightsArePositive) {
-        cout << 'The graph has negative weights! Impossible to apply dijkstra' << endl;
+    if (!allWeightsArePositive()) {
+        cout << "The graph has negative weights! Impossible to apply dijkstra" << endl;
         return;
     }
 
-
-    struct Vertex {
-        int vertexID;
-        float totalCost;
-        bool operator<(const Vertex& anotherVertex) const
-        {
-            return totalCost < anotherVertex.totalCost;
-        }
-    };
-
-    vector<float> distances;
-    vector<int> exploredVertexes {};
+    startVertex = startVertex -1 ;
+    vector<bool> exploredVertexes (adjMatrix.size(), false);
+    vector<float> distances (adjMatrix.size());
+    // if(hasAdjVectorRepresentation) {
+    //     distances (adjVector.size());
+    // } else {
+        
+    // }
     priority_queue<Vertex> unExploredVertexes; // Priority queue to store discovered but not explored vertexes
 
-
-    for (unsigned i = 0; i < adjVector.size(); i++) {
-        distances[i] = numeric_limits<float>::max();
-        Vertex a;
-        a.vertexID = i;
-        a.totalCost = numeric_limits<float>::max();
-        unExploredVertexes.push(a);
+    if(hasAdjVectorRepresentation) {
+        for (unsigned i = 0; i < adjVector.size() ; i++) {
+            distances[i] = numeric_limits<float>::max();
+        }
+    } else {
+    
+        for (unsigned i = 0; i < adjMatrix.size(); i++) {
+            distances[i] = numeric_limits<float>::max();
+        }
     }
+
     distances[startVertex] = 0;
+    
+    Vertex a;
+    a.vertexID = startVertex;
+    a.totalCost = 0;
+    
+    unExploredVertexes.push(a);
 
     while (unExploredVertexes.size() != 0) 
     {
         Vertex exploring = unExploredVertexes.top();
         unExploredVertexes.pop();
-        exploredVertexes.push_back(exploring.vertexID);
-
+        exploredVertexes[exploring.vertexID] = true;
         vector<int> adjacencesOfCurrentVertex = getAdjacences(exploring.vertexID);
-                		
 		for (unsigned int i = 0; i < adjacencesOfCurrentVertex.size(); i++)
 		{
-            int currentVertexId = exploring.vertexID;
-            int adjacentVertexId = adjacencesOfCurrentVertex[i];
+            int currentVertexId = exploring.vertexID ;
+            int adjacentVertexId = adjacencesOfCurrentVertex[i]  ;
+            
+            if (exploredVertexes[adjacentVertexId]) {
+                continue;
+            }
+
 			float edgeWeight;
             if (hasAdjVectorRepresentation) {
                 edgeWeight = adjVector[currentVertexId][adjacentVertexId].weight;
@@ -181,25 +193,30 @@ void KonigsGraph::dijkstraAlgorithm(int startVertex) {
                 edgeWeight = adjMatrix[currentVertexId][adjacentVertexId];
             }
 
-
 			if (distances[adjacentVertexId] > distances[currentVertexId] + edgeWeight)
-			{ 
+			{
 				distances[adjacentVertexId] = distances[currentVertexId] + edgeWeight;
-				// unExploredVertexes[adjacentVertexId].
+
+                Vertex b;
+                b.vertexID = adjacentVertexId;
+                b.totalCost = distances[currentVertexId] + edgeWeight;
+
+                unExploredVertexes.push(b);
 			}
 		}
-        /* 
-
-        1. Selecionar vértice u na fila de prioridade de unexploredVertexes
-        2. Adicionar u em exploredVertexes
-        3. Pra cada vizinho v de u:
-            3.1 Se dist[u] + w(u,v) < dist[v] #Distâcia conhecida previamente até v
-                dist[v] = dist[u] + w(u,v)
-         */
-
-
     }
-    
+
+    if(hasAdjVectorRepresentation) {
+        for (unsigned i = 0; i < adjVector.size() ; i++) {
+            // distances[i] = numeric_limits<float>::max();
+            cout << "distance from vertex " << startVertex << " and " << i << " = " << distances[i] << endl;
+        }
+    } else {
+        for (unsigned i = 0; i < adjMatrix.size(); i++) {
+            // distances[i] = numeric_limits<float>::max();
+            cout << "distance from vertex " << startVertex << " and " << i << " = " << distances[i] << endl;
+        }
+    }
 
 }
 
