@@ -74,8 +74,6 @@ void KonigsGraph::printAdjVectorGraph(){
     for (unsigned line = 0; line < adjVector.size(); line++){
         for (unsigned column = 0; column < adjVector[line].size(); column++){
             cout << "vertex " << line + 1 << "is adjacent to " << adjVector[line][column].adjacentVertex << endl;
-            // cout << adjVector[line][column].adjacentVertex << " ";
-            // cout << adjVector[line][column].weight << " ";
         }
         cout << endl;
     }
@@ -135,7 +133,6 @@ vector<int> KonigsGraph::getAdjacences(int referenceVertex) {
     return adjacences;
 }
 
-
 void KonigsGraph::dijkstraAlgorithm(int startVertex) {
     if (!allWeightsArePositive()) {
         cout << "The graph has negative weights! Impossible to apply dijkstra" << endl;
@@ -145,11 +142,7 @@ void KonigsGraph::dijkstraAlgorithm(int startVertex) {
     startVertex = startVertex -1 ;
     vector<bool> exploredVertexes (adjMatrix.size(), false);
     vector<float> distances (adjMatrix.size());
-    // if(hasAdjVectorRepresentation) {
-    //     distances (adjVector.size());
-    // } else {
-        
-    // }
+
     priority_queue<Vertex> unExploredVertexes; // Priority queue to store discovered but not explored vertexes
 
     if(hasAdjVectorRepresentation) {
@@ -218,5 +211,38 @@ void KonigsGraph::dijkstraAlgorithm(int startVertex) {
         }
     }
 
+}
+
+void KonigsGraph::identifyBipartite(int initial_vertex = 0) {
+    /*
+    Adaptation of the BFS algorithm that enables to identify if a graph is bipartite.
+    The method separates all vertexes into 2 groups. If one vertex belongs to both groupos this means
+    that the graph is not bipartite
+    */
+    if (hasAdjMatrixRepresentation) {
+        queue <int> to_explore; 
+        vector<int> explored(numberOfVertex, 0); // 0 for unexplored, 1 for group 1, 2 for group 2
+        to_explore.push(initial_vertex);
+        int group = 1;
+        while (to_explore.size() > 0) {
+            if (group == 1) {
+                group = 2;
+            } else {
+                group = 1;
+            }
+            int u = to_explore.front();
+            explored[u] = group;
+            for (int v = 0; v < numberOfVertex ; v++) {
+                if (adjMatrix[u][v] != 0 && explored[v] == 0) {
+                    to_explore.push(v);
+                } else if (adjMatrix[u][v] != 0 && explored[v] == group) {
+                    cout << 'Não é bipartido' <<endl;
+                }
+            }
+        }
+        cout << 'É bipartido' <<endl;
+    } else if (hasAdjVectorRepresentation) {
+        return 2+2;
+    }
 }
 
