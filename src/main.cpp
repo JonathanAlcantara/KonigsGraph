@@ -9,7 +9,7 @@ int main(){
     test_graph.printAdjVectorGraph();
     test_graph.printAdjMatrixGraph();
     test_graph.dijkstraAlgorithm(1);
-    test_graph.identifyBipartite(1);
+    test_graph.identifyBipartite(0);
     test_graph.~KonigsGraph();   
 
     // cout << "Starting Rede Colaboraçao Graph" << endl;

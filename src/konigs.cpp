@@ -247,8 +247,10 @@ bool KonigsGraph::identifyBipartite(int initial_vertex = 0) {
             }
         }
         cout << "É bipartido" <<endl;
+        KonigsGraph::buildBipartite(explored);
         return true;
         // Must build the bipartition representation
+
     }
 }
 
