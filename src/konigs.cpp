@@ -248,5 +248,19 @@ bool KonigsGraph::identifyBipartite(int initial_vertex = 0) {
         }
         cout << "É bipartido" <<endl;
         return true;
+        // Must build the bipartition representation
+    }
+}
+
+
+void KonigsGraph::buildBipartite(vector<short int> explored_nodes) {
+    pair < list <int>, list <int> > groups;
+    int group_number;
+    for (int v = 0; v < explored_nodes.size() ; v++) {
+        group_number = explored_nodes[v];
+        if (group_number == 1) {
+            groups.first.push_back(v);
+        } else if (group_number == 2)
+            groups.second.push_back(v);
     }
 }

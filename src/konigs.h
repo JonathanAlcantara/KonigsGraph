@@ -28,7 +28,8 @@ class KonigsGraph {
         void printAdjMatrixGraph();
         bool allWeightsArePositive();
         void dijkstraAlgorithm(int startVertex);
-        bool identifyBipartite(int);
         vector<int> getAdjacences(int referenceVertex);
+        bool identifyBipartite(int);
+        void buildBipartite(vector<short int> explored_nodes);
 
 };
