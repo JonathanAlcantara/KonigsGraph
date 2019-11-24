@@ -16,7 +16,7 @@ class KonigsGraph {
         bool isStatsUpdated;
         bool hasAdjVectorRepresentation;
         bool hasAdjMatrixRepresentation;
-        unsigned numberOfVertex, numberOfEdges, minDegree, maxDegree, meanDegree, medianDegree;
+        unsigned numberOfNodes, numberOfEdges, minDegree, maxDegree, meanDegree, medianDegree;
         vector<vector<float>> adjMatrix;
         vector<vector<Edge>> adjVector;
 
@@ -28,7 +28,7 @@ class KonigsGraph {
         void printAdjMatrixGraph();
         bool allWeightsArePositive();
         void dijkstraAlgorithm(int startVertex);
-        void identifyBipartite(int);
+        bool identifyBipartite(int);
         vector<int> getAdjacences(int referenceVertex);
 
 };

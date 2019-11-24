@@ -17,7 +17,7 @@ void KonigsGraph::loadGraphFromFile(string file, bool createMatrix, bool createV
 
     string line;
     getline(inFile, line);
-    unsigned numberOfNodes = stoi(line);
+    numberOfNodes = stoi(line);
     if(createMatrix){
         adjMatrix = vector<vector<float>> (numberOfNodes, vector<float>(numberOfNodes));
     }
@@ -213,7 +213,7 @@ void KonigsGraph::dijkstraAlgorithm(int startVertex) {
 
 }
 
-void KonigsGraph::identifyBipartite(int initial_vertex = 0) {
+bool KonigsGraph::identifyBipartite(int initial_vertex = 0) {
     /*
     Adaptation of the BFS algorithm that enables to identify if a graph is bipartite.
     The method separates all vertexes into 2 groups. If one vertex belongs to both groupos this means
@@ -221,28 +221,32 @@ void KonigsGraph::identifyBipartite(int initial_vertex = 0) {
     */
     if (hasAdjMatrixRepresentation) {
         queue <int> to_explore; 
-        vector<int> explored(numberOfVertex, 0); // 0 for unexplored, 1 for group 1, 2 for group 2
+        vector<short int> explored(numberOfNodes, 0); // 0 for unexplored, 1 for group 1, 2 for group 2
         to_explore.push(initial_vertex);
-        int group = 1;
+        explored[initial_vertex] = 1;
         while (to_explore.size() > 0) {
-            if (group == 1) {
-                group = 2;
-            } else {
-                group = 1;
-            }
             int u = to_explore.front();
-            explored[u] = group;
-            for (int v = 0; v < numberOfVertex ; v++) {
-                if (adjMatrix[u][v] != 0 && explored[v] == 0) {
-                    to_explore.push(v);
-                } else if (adjMatrix[u][v] != 0 && explored[v] == group) {
-                    cout << 'Não é bipartido' <<endl;
+            to_explore.pop();
+            for (int v = 0; v < numberOfNodes ; v++) {
+                if (adjMatrix[u][v] != 0) {
+                    if (explored[v] == 0) {
+                        to_explore.push(v);
+                        if (explored[u] == 1)
+                            explored[v] = 2;
+                        else if (explored[u] == 2)
+                            explored[v] = 1;
+                    }
+                    else if (explored[v] == explored[u]) {
+                        cout << "Não é bipartido" << endl;
+                        return false;
+                    }
+                    else if (explored[v] != explored[u]) {
+                        continue;
+                    }
                 }
             }
         }
-        cout << 'É bipartido' <<endl;
-    } else if (hasAdjVectorRepresentation) {
-        return 2+2;
+        cout << "É bipartido" <<endl;
+        return true;
     }
 }
-
