@@ -4,6 +4,7 @@ using namespace std;
 #include "vertex.h"
 #include <limits>
 #include <queue>
+#include <climits>
 
 void KonigsGraph::loadGraphFromFile(string file, bool createMatrix, bool createVector) {
 
@@ -32,11 +33,13 @@ void KonigsGraph::loadGraphFromFile(string file, bool createMatrix, bool createV
         float weight;
 
         if (!(iss >> vertex1 >> vertex2 >> weight)) { break; } // error
-        if (createMatrix){
+        if (createMatrix && !isDirected){
             adjMatrix[vertex1 - 1][vertex2 - 1] = weight;
             adjMatrix[vertex2 - 1][vertex1 - 1] = weight;
+        } else if (createMatrix && isDirected) {
+            adjMatrix[vertex1 - 1][vertex2 - 1] = weight;
         }
-        if (createVector){
+        if (createVector && !isDirected){
             Edge edge1;
             Edge edge2;
             edge1.adjacentVertex =  vertex2-1;
@@ -45,14 +48,19 @@ void KonigsGraph::loadGraphFromFile(string file, bool createMatrix, bool createV
             edge2.weight = weight;
             adjVector[vertex1 - 1].push_back(edge1);
             adjVector[vertex2 - 1].push_back(edge2);
+        } else if (createVector && isDirected){
+            Edge edge1;
+            edge1.adjacentVertex =  vertex2-1;
+            edge1.weight = weight;
+            adjVector[vertex1 - 1].push_back(edge1);
+
         }
     }
 
     inFile.close();
 };
 
-
-KonigsGraph::KonigsGraph(string file, bool createMatrix = true, bool createVector = true){
+KonigsGraph::KonigsGraph(string file, bool createMatrix = true, bool createVector = true, bool directed = false){
     if (createMatrix) {
         KonigsGraph::hasAdjMatrixRepresentation = true;
     } else {
@@ -62,6 +70,11 @@ KonigsGraph::KonigsGraph(string file, bool createMatrix = true, bool createVecto
         KonigsGraph::hasAdjVectorRepresentation = true;
     } else {
         KonigsGraph::hasAdjVectorRepresentation = false;
+    }
+    if (directed) {
+        KonigsGraph::isDirected = true;
+    } else {
+        KonigsGraph::isDirected = false;
     }
     KonigsGraph::loadGraphFromFile(file, createMatrix, createVector);
 }
@@ -112,7 +125,6 @@ bool KonigsGraph::allWeightsArePositive() {
     return true;
 }
 
-// Method to get the neightbors of a vertex
 vector<int> KonigsGraph::getAdjacences(int referenceVertex) {
     vector<int> adjacences;
     if (hasAdjVectorRepresentation) {
@@ -254,7 +266,6 @@ bool KonigsGraph::identifyBipartite(int initial_vertex = 0) {
     }
 }
 
-
 void KonigsGraph::buildBipartite(vector<short int> explored_nodes) {
     pair < list <int>, list <int> > groups;
     int group_number;
@@ -265,4 +276,35 @@ void KonigsGraph::buildBipartite(vector<short int> explored_nodes) {
         } else if (group_number == 2)
             groups.second.push_back(v);
     }
+}
+
+vector<vector<float>> KonigsGraph::bellmanFord(int start_node) {
+    start_node = start_node - 1;
+    // vector<int> distances(numberOfNodes, INT_MAX); // Distances from start_node
+    vector<vector<float>> distances (numberOfNodes, vector<float>(numberOfNodes, INT_MAX));
+    distances[0][start_node] = 0;
+    
+    for (int i = 1; i < numberOfNodes; i ++) {
+        for (int v = 1; v < numberOfNodes; v ++) {
+            distances[i][v] = distances[i-1][v];
+            for (int w = 0; w < adjMatrix[v].size(); w++) {
+                if (adjMatrix[v][w] != 0) {
+                    if (distances[i-1][w] + adjMatrix[v][w] < distances[i][v]) {
+                        distances[i][v] = distances[i-1][w] + adjMatrix[v][w];
+                    }
+                }
+            }
+        }
+    }
+    for (unsigned line = 0; line < distances.size(); line++){
+        for (unsigned column = 0; column < distances.size(); column++){
+            if (distances[line][column] == INT_MAX) {
+                cout << "inf" << " " ;
+            } else {
+                cout << distances[line][column] << " " ;
+            }
+        }
+        cout << endl;
+    }
+    return distances;
 }

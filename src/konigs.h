@@ -13,6 +13,7 @@ using namespace std;
 
 class KonigsGraph {
     private:
+        bool isDirected;
         bool isStatsUpdated;
         bool hasAdjVectorRepresentation;
         bool hasAdjMatrixRepresentation;
@@ -21,7 +22,7 @@ class KonigsGraph {
         vector<vector<Edge>> adjVector;
 
     public:
-        KonigsGraph(string file, bool createMatrix, bool createVector);
+        KonigsGraph(string file, bool createMatrix, bool createVector, bool directed);
         ~KonigsGraph();
         void loadGraphFromFile(string file, bool createMatrix, bool createVector);
         void printAdjVectorGraph();
@@ -31,5 +32,6 @@ class KonigsGraph {
         vector<int> getAdjacences(int referenceVertex);
         bool identifyBipartite(int);
         void buildBipartite(vector<short int> explored_nodes);
+        vector<vector<float>> bellmanFord(int start_node);
 
 };
