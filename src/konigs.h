@@ -33,6 +33,8 @@ class KonigsGraph {
         bool identifyBipartite(int);
         void buildBipartite(vector<short int> explored_nodes);
         vector<float> bellmanFord(int start_node);
-        void mapAllDistances();
-
+        vector<vector<float>> mapAllDistances(bool print);
+        void checkForNegativeCycle(vector<float> distances);
+        void printDistancesMatrix(vector<vector<float>>);
+        bool hasNegativeCycle = false;
 };

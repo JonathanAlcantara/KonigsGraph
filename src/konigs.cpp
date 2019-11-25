@@ -295,39 +295,52 @@ vector<float> KonigsGraph::bellmanFord(int start_node) {
             }
         }
     }
+    
+    KonigsGraph::checkForNegativeCycle(distances[numberOfNodes - 1]);
+    // KonigsGraph::printDistancesMatrix(distances);
 
-    for (unsigned line = 0; line < distances.size(); line++){
-        for (unsigned column = 0; column < distances.size(); column++){
-            if (distances[line][column] == INT_MAX) {
-                cout << "inf" << " " ;
-            } else {
-                cout << distances[line][column] << " " ;
-            }
-        }
-        cout << endl;
-    }
-    cout << "end " << endl;
     return distances[numberOfNodes -1];
 }
 
 
-
-void KonigsGraph::mapAllDistances() {
+vector<vector<float>> KonigsGraph::mapAllDistances(bool print = false) {
     vector<vector<float>> distancesMatrix (numberOfNodes, vector<float>(numberOfNodes, INT_MAX));
     
     for (int i = 1; i <= numberOfNodes; i ++) {
         distancesMatrix[i-1] = KonigsGraph::bellmanFord(i);
     }
 
-    for (unsigned line = 0; line < distancesMatrix.size(); line++){
-        for (unsigned column = 0; column < distancesMatrix.size(); column++){
-            if (distancesMatrix[line][column] == INT_MAX) {
+    if (print) {
+        KonigsGraph::printDistancesMatrix(distancesMatrix);
+    }
+
+    return distancesMatrix;
+}
+
+void KonigsGraph::checkForNegativeCycle(vector<float> distances) {
+    for (int u = 0; u < numberOfNodes; u ++) {
+        for (int v = 0; v < numberOfNodes; v ++) {
+            if (adjMatrix[u][v] != 0) {
+                if (distances[u] + adjMatrix[u][v] < distances[v]) {
+                    hasNegativeCycle = true;
+                }
+            }
+        }
+    }
+}
+
+void KonigsGraph::printDistancesMatrix(vector<vector<float>> distances) {
+
+    for (unsigned line = 0; line < distances.size(); line++){
+        for (unsigned column = 0; column < distances.size(); column++){
+            if (distances[line][column] == INT_MAX) {
                 cout << "inf" << " " ;
+            } else if (distances[line][column] == - INT_MAX) {
+                cout << "- inf" << " " ;
             } else {
-                cout << distancesMatrix[line][column] << " " ;
+                cout << distances[line][column] << " " ;
             }
         }
         cout << endl;
     }
-
 }
