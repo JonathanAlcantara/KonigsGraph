@@ -32,6 +32,7 @@ class KonigsGraph {
         vector<int> getAdjacences(int referenceVertex);
         bool identifyBipartite(int);
         void buildBipartite(vector<short int> explored_nodes);
-        vector<vector<float>> bellmanFord(int start_node);
+        vector<float> bellmanFord(int start_node);
+        void mapAllDistances();
 
 };

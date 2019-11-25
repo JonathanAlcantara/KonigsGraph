@@ -278,13 +278,13 @@ void KonigsGraph::buildBipartite(vector<short int> explored_nodes) {
     }
 }
 
-vector<vector<float>> KonigsGraph::bellmanFord(int start_node) {
+vector<float> KonigsGraph::bellmanFord(int start_node) {
     start_node = start_node - 1;
     vector<vector<float>> distances (numberOfNodes, vector<float>(numberOfNodes, INT_MAX));
     distances[0][start_node] = 0;
 
     for (int i = 1; i < numberOfNodes; i ++) {
-        for (int v = 1; v < numberOfNodes; v ++) {
+        for (int v = 0; v < numberOfNodes; v ++) {
             distances[i][v] = distances[i-1][v];
             for (int w = 0; w < numberOfNodes; w++) {
                 if (adjMatrix[w][v] != 0) {  // This means that there is an edge
@@ -295,6 +295,7 @@ vector<vector<float>> KonigsGraph::bellmanFord(int start_node) {
             }
         }
     }
+
     for (unsigned line = 0; line < distances.size(); line++){
         for (unsigned column = 0; column < distances.size(); column++){
             if (distances[line][column] == INT_MAX) {
@@ -305,5 +306,28 @@ vector<vector<float>> KonigsGraph::bellmanFord(int start_node) {
         }
         cout << endl;
     }
-    return distances;
+    cout << "end " << endl;
+    return distances[numberOfNodes -1];
+}
+
+
+
+void KonigsGraph::mapAllDistances() {
+    vector<vector<float>> distancesMatrix (numberOfNodes, vector<float>(numberOfNodes, INT_MAX));
+    
+    for (int i = 1; i <= numberOfNodes; i ++) {
+        distancesMatrix[i-1] = KonigsGraph::bellmanFord(i);
+    }
+
+    for (unsigned line = 0; line < distancesMatrix.size(); line++){
+        for (unsigned column = 0; column < distancesMatrix.size(); column++){
+            if (distancesMatrix[line][column] == INT_MAX) {
+                cout << "inf" << " " ;
+            } else {
+                cout << distancesMatrix[line][column] << " " ;
+            }
+        }
+        cout << endl;
+    }
+
 }
