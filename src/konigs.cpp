@@ -280,17 +280,16 @@ void KonigsGraph::buildBipartite(vector<short int> explored_nodes) {
 
 vector<vector<float>> KonigsGraph::bellmanFord(int start_node) {
     start_node = start_node - 1;
-    // vector<int> distances(numberOfNodes, INT_MAX); // Distances from start_node
     vector<vector<float>> distances (numberOfNodes, vector<float>(numberOfNodes, INT_MAX));
     distances[0][start_node] = 0;
-    
+
     for (int i = 1; i < numberOfNodes; i ++) {
         for (int v = 1; v < numberOfNodes; v ++) {
             distances[i][v] = distances[i-1][v];
-            for (int w = 0; w < adjMatrix[v].size(); w++) {
-                if (adjMatrix[v][w] != 0) {
-                    if (distances[i-1][w] + adjMatrix[v][w] < distances[i][v]) {
-                        distances[i][v] = distances[i-1][w] + adjMatrix[v][w];
+            for (int w = 0; w < numberOfNodes; w++) {
+                if (adjMatrix[w][v] != 0) {  // This means that there is an edge
+                    if (distances[i-1][w] + adjMatrix[w][v] < distances[i][v]) {
+                        distances[i][v] = distances[i-1][w] + adjMatrix[w][v];
                     }
                 }
             }
